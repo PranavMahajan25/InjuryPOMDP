@@ -1,7 +1,3 @@
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### HOUSEKEEPING
-#import what is necessary and some things that may be unnecessary, and convenience functions
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -13,7 +9,47 @@ from modelFunctions_rumPOMDP import *
 from convenience_functions_rumPOMDP import *
 
 class POMDP:
-    
+    """
+    A class to represent a Partially Observable Markov Decision Process (POMDP).
+
+    Attributes:
+    ----------
+    name : str
+        The name of the observation.
+    xMeans : numpy.ndarray
+        The means of the observation distributions.
+    xStd : numpy.ndarray
+        The standard deviations of the observation distributions.
+    obvs : numpy.ndarray
+        The range of observations.
+    obvPrior : numpy.ndarray
+        The prior probabilities for all observations.
+    beliefRange : numpy.ndarray
+        The discretized belief space.
+    beliefTrans : numpy.ndarray
+        The belief transition matrix.
+    beliefValues : numpy.ndarray
+        The values of each belief state.
+    actionValues : numpy.ndarray
+        The action values for each belief state.
+    decisionThreshold : numpy.ndarray
+        The decision thresholds for each reward function and cost.
+    allRewards : numpy.ndarray
+        The rewards associated with actions.
+    allCosts : numpy.ndarray
+        The costs associated with actions.
+    obvStep : float
+        The step size for observations.
+
+    Methods:
+    -------
+    belief_transition_matrix():
+        Calculates the belief transition matrix.
+    belief_transition_matrix_plot(figSave):
+        Plots the belief transition matrix and observation distributions.
+    value_iteration(allRewards, allCosts, figPrint, figSave):
+        Calculates the value of each state using dynamic programming.
+    """
     def __init__(self,xObvs,obvStep):
         #...set the parameters for the observation distributions
         self.name = xObvs[0]

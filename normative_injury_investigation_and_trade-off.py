@@ -1,3 +1,24 @@
+"""
+This script implements a Partially Observable Markov Decision Process (POMDP) 
+for investigating injury scenarios and trade-offs in decision-making. 
+
+The code performs the following tasks:
+
+1. Imports necessary libraries for data manipulation, plotting, and POMDP functionality.
+2. Sets Numpy print options for better readability of numerical outputs.
+3. Defines bespoke functions for POMDP operations.
+4. Initializes parameters for the POMDP, including observations and costs associated with actions.
+5. Executes value iteration to compute optimal policies based on defined rewards and costs.
+6. Generates plots to visualize belief transition matrices and Q-values for different scenarios.
+7. Allows for the exploration of various cost structures and their impact on decision-making.
+
+Key Variables:
+- `xObvs_injured`: Represents the observations related to injury states.
+- `A3Cost`: Cost associated with a specific action (moving the injured body part).
+- `figFolder`: Directory for saving generated figures.
+
+The script is designed to facilitate the analysis of decision-making processes in the context of injury recovery and information gain.
+"""
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### IMPORT SOME STUFF
 #import what is necessary and some things that may be unnecessary
@@ -55,9 +76,10 @@ figFolder = os.path.join('simulations/behaviour_infogain/figures')
 # A2 in X2 gives R = +100
 
 selves = []
-# xObvs_injured = ['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15]
-xObvs_injured = ['A3_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]
 
+## Choose the observations that you want to use
+xObvs_injured = ['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15]
+# xObvs_injured = ['A3_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]
 
 A3Cost =  np.array([-4]) # this reduces in the late stages of recovery 
 obvStep = np.array([1]) #...this discretizes the observations which go from 1 to 100
@@ -76,11 +98,13 @@ selves.append(sim)
 
 qvalues_figure4(figFolder)
 
-# beliefStart = 0.5
-# sample_sequence_observation_accumulated_cost(sim,rewardID,costID,beliefStart,100,1,"no_mismatch", obv_truestate=0)
-# qvalues_figure5(sim, rewardID, costID, figFolder) # injury investigation
-# print("done")
+# This will generate the plot with belief hopping
+beliefStart = 0.5
+sample_sequence_observation_accumulated_cost(sim,rewardID,costID,beliefStart,100,1,"no_mismatch", obv_truestate=0)
+qvalues_figure5(sim, rewardID, costID, figFolder) # injury investigation
+print("done")
 
+## Uncomment the following lines to run the second simulation with a scenario e.g. phasic pain > info gain.
 A3Cost =  np.array([-16]) # this reduces in the late stages of recovery 
 obvStep = np.array([1]) #...this discretizes the observations which go from 1 to 100
 sim2 = POMDP(xObvs_injured,obvStep)
@@ -97,41 +121,8 @@ thresh1b, thresh2b = qvalues_figure(sim2,rewardID, costID,figFolder)
 selves.append(sim2)
 
 
-# intersections = [thresh1a, thresh2a, thresh1b, thresh2b]
+## This plots results on info gain -  phasic pain trade-off.
 
-# qvalues_figure3_balance(selves, intersections, figFolder)
+intersections = [thresh1a, thresh2a, thresh1b, thresh2b]
 
-
-
-
-# A3Cost =  np.array([-8])
-# obvStep = np.array([1])
-# sim800 = POMDP(xObvs_injured,obvStep)
-# sim800.belief_transition_matrix()
-# sim800.belief_transition_matrix_plot(figFolder)
-# allRewards = np.array([[ 100 ,  -100,    -800 ,  100 ]])
-# allCosts = A3Cost
-# sim800.value_iteration(allRewards,A3Cost,figPrint,figFolder)
-
-# sim600 = POMDP(xObvs_injured,obvStep)
-# sim600.belief_transition_matrix()
-# sim600.belief_transition_matrix_plot(figFolder)
-# allRewards = np.array([[ 100 ,  -100,    -600 ,  100 ]])
-# allCosts = A3Cost
-# sim600.value_iteration(allRewards,A3Cost,figPrint,figFolder)
-
-# sim400 = POMDP(xObvs_injured,obvStep)
-# sim400.belief_transition_matrix()
-# sim400.belief_transition_matrix_plot(figFolder)
-# allRewards = np.array([[ 100 ,  -100,    -400 ,  100 ]])
-# allCosts = A3Cost
-# sim400.value_iteration(allRewards,A3Cost,figPrint,figFolder)
-
-# sim200 = POMDP(xObvs_injured,obvStep)
-# sim200.belief_transition_matrix()
-# sim200.belief_transition_matrix_plot(figFolder)
-# allRewards = np.array([[ 100 ,  -100,    -200 ,  100 ]])
-# allCosts = A3Cost
-# sim200.value_iteration(allRewards,A3Cost,figPrint,figFolder)
-
-# qvalues_figure2_punishmentsens([sim800, sim600, sim400, sim200], figFolder)
+qvalues_figure3_balance(selves, intersections, figFolder)

@@ -3,10 +3,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def rewards_hidden_states(whatRewards, baseNo):
+    """
+    Calculate rewards based on the specified reward type and a base value.
 
+    Parameters:
+    whatRewards (str): The type of rewards to calculate. 
+                       Options include:
+                       - "loss_incorrect"
+                       - "loss_correct"
+                       - "gain_incorrect"
+                       - "gain_correct"
+    baseNo (float): The base value used to calculate the rewards.
 
-def rewards_hidden_states(whatRewards,baseNo):
-
+    Returns:
+    tuple: A tuple containing:
+        - allRewards (numpy.ndarray): An array of calculated rewards based on the specified type.
+        - ratioIdx (list): A list of indices used to organize the x-axis of figures based on the ratio.
+    """
     if whatRewards=="loss_incorrect":
 
         granRewards = 0.25 #...granuality of ratios

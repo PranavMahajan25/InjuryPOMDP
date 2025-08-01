@@ -9,8 +9,20 @@ from convenience_functions_rumPOMDP import *
 
 plt.rcParams.update({'font.size': 22})
 
-def qvalues_figure(self,rewardID,figSave):
+def qvalues_figure(self, rewardID, figSave):
+    """
+    Generates and saves a figure displaying the action values for given rewards.
 
+    Parameters:
+    rewardID (list): A list of reward identifiers for which action values are to be plotted.
+    figSave (str): The directory path where the figure will be saved. If an empty string is provided, the figure will not be saved.
+
+    Returns:
+    tuple: A tuple containing two threshold values (thresh1, thresh2) used in the figure.
+    
+    The function creates subplots for each reward in rewardID, plots the action values against the belief range,
+    and adds decision thresholds as dashed lines. The figure is saved as a PNG file in the specified directory.
+    """
     beliefRange = self.beliefRange
 
     fig,axs = plt.subplots(1,len(rewardID))

@@ -5,7 +5,7 @@ from scipy import stats
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Bayes theorem (equation 4)
+### Bayes theorem 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 def bayes_theorem(beliefRange,cuePrior,settings):
     margEvid = np.outer((1-beliefRange),cuePrior[0,:])+np.outer(beliefRange,cuePrior[1,:])
@@ -14,7 +14,7 @@ def bayes_theorem(beliefRange,cuePrior,settings):
     return margEvid,posterior
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Calculate the value of termining actions given the belief state (equation 1)
+### Calculate the value of termining actions given the belief state 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 def qVal_lr(rewards,beliefState,settings): 
     
@@ -30,22 +30,8 @@ def qVal_lr(rewards,beliefState,settings):
     return qVal_l,qVal_r,qVal_max
 
 
-##So this is an adaptation of Sam's model, because in his you do actually do the right thing
-#thus it only effects the value of sampling, another way to edit would be transition probabilities for the terminal state
-#then you will just go to the state with the higher expected value for this
-#if you might always do the wrong thing, then knowing you are in a place with the best thing doesn't help you
-#only if the belief state influences the likely you actually take some action
-
-#Sam's model makes the value of sampling reduce, this seems obvious now...
-
-#the difficult of the question thus is...in what situations would increasing increased state certainity be needed
-#that aren't just about actions, where sampling would also increase your action propensity
-#there would need to be different actions for each state
-#so the actions are zero'd for the other state, but if you select them you terminate
-#add this in the email to Sashank
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### Calculate the value of taking another sample given the belief state (equation 5)
+### Calculate the value of taking another sample given the belief state
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 def qVal_cost(costReward,transBelief,beliefValue,cueStep,settings):
         

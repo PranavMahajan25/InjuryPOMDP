@@ -1,3 +1,19 @@
+"""
+This module simulates a Partially Observable Markov Decision Process (POMDP) environment
+to analyze the effects of different belief states on decision-making in the context of injury 
+assessment and management. The simulation evaluates the outcomes of various actions taken 
+based on the true state of the system (injured or not injured) and computes the associated 
+rewards and costs.
+
+Key components of the simulation include:
+- Importing necessary libraries for data manipulation, visualization, and POMDP functionality.
+- Defining the reward structure based on the true state and actions taken.
+- Running simulations for different initial belief states and collecting results.
+- Visualizing the average rewards over multiple trials and saving the results for further analysis.
+
+Functions:
+- run_one_costly_action_sim: Simulates a single costly action in a POMDP environment.
+"""
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ### IMPORT SOME STUFF
 #import what is necessary and some things that may be unnecessary
@@ -49,6 +65,17 @@ from sample_sequence_functions_rumPOMDP import *
 # A2 in X2 gives R = +100
 
 def run_one_costly_action_sim(true_state, figFolder, b0=0.5): 
+    """
+    Simulates a single costly action in a POMDP (Partially Observable Markov Decision Process) environment.
+
+    Parameters:
+    true_state (str): The true state of the system, which influences the observations and rewards.
+    figFolder (str): The folder path where figures will be saved.
+    b0 (float, optional): The initial belief state. Defaults to 0.5, usually set to midpoint of thresholds.
+
+    Returns:
+    tuple: A tuple containing the POMDP simulation object, and two threshold values (thresh1, thresh2).
+    """
     obvStep = np.array([1]) #...this discretizes the observations which go from 1 to 100
     if true_state == "injured_01": #gain>pain
         xObvs = ['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15]

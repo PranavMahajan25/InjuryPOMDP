@@ -1,7 +1,4 @@
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-### HOUSEKEEPING
-#import what is necessary and some things that may be unnecessary, and convenience functions
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -10,10 +7,56 @@ import copy
 import importlib
 
 from modelFunctions_rumPOMDP import *
-from convenience_functions_rumPOMDP import *
+from convenience_functions_rumPOMDP import *   
 
 class POMDP:
-    
+    """
+    A class to represent a Partially Observable Markov Decision Process (POMDP) with two costly actions: investigate and not-investigate.
+
+    Attributes:
+    ----------
+    A3name : str
+        The name of the investigate action.
+    A3xMeans : np.ndarray
+        The means of the observation model associated with the investigate action.
+    A3xStd : np.ndarray
+        The standard deviations of the investigate action's observation distributions.
+    A3obvs : np.ndarray
+        The range of observations for the investigate action.
+    A3obvPrior : np.ndarray
+        The prior probabilities for the investigate action's observations.
+    A3margEvid : np.ndarray
+        The marginal evidence for the investigate action's observations.
+    A3posterior : np.ndarray
+        The posterior probabilities for the investigate action's observations.
+    A4name : str
+        The name of the not-investigate action.
+    A4xMeans : np.ndarray
+        The means of the not-investigate action's observation distributions.
+    A4xStd : np.ndarray
+        The standard deviations of the not-investigate action's observation distributions.
+    A4obvs : np.ndarray
+        The range of observations for the not-investigate action.
+    A4obvPrior : np.ndarray
+        The prior probabilities for the not-investigate action's observations.
+    A4margEvid : np.ndarray
+        The marginal evidence for the not-investigate action's observations.
+    A4posterior : np.ndarray
+        The posterior probabilities for the not-investigate action's observations.
+    beliefRange : np.ndarray
+        The range of belief states.
+    obvStep : float
+        The step size for observations.
+
+    Methods:
+    -------
+    belief_transition_matrix():
+        Calculates the belief transition matrix for both actions.
+    belief_transition_matrix_plot(figSave):
+        Plots the belief transition matrices and observation distributions for both actions.
+    value_iteration(allRewards, A3Cost, A4Cost, figPrint, figSave):
+        Calculates the value of each state using dynamic programming.
+    """
     def __init__(self,xObvs,obvStep):
         #...set the parameters for the observation distributions
         A3xObvs = xObvs[0]

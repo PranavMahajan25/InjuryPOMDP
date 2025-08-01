@@ -8,8 +8,48 @@ import importlib
 from modelFunctions_rumPOMDP import *
 from convenience_functions_rumPOMDP import *
 
-def sample_sequence_observation_accumulated_cost(self, rewardID,costID,beliefStart,maxSample,noTrials,obv_mismatch, obv_truestate=1, A3Cost = np.array([-4])):
+def sample_sequence_observation_accumulated_cost(self, rewardID, costID, beliefStart, maxSample, noTrials, obv_mismatch, obv_truestate=1, A3Cost=np.array([-4])):
+    """
+    Samples a sequence of observations and accumulates costs based on the given parameters.
+
+    Parameters:
+    -----------
+    rewardID : array-like
+        An array of reward identifiers used to index the reward values.
     
+    costID : array-like
+        An array of cost identifiers used to index the cost values.
+    
+    beliefStart : float
+        The initial belief value from which to start sampling.
+    
+    maxSample : int
+        The maximum number of samples to draw in each trial.
+    
+    noTrials : int
+        The number of trials to perform.
+    
+    obv_mismatch : str
+        A string indicating whether to use mismatched observations ('mismatch') or standard observations.
+    
+    obv_truestate : int, optional
+        The true state of the observation (default is 1).
+    
+    A3Cost : numpy.ndarray, optional
+        An array representing the cost associated with action A3 (default is an array with a single value of -4).
+
+    Returns:
+    --------
+    None
+        The function modifies the instance variables of the class it belongs to, storing results of the sampling process.
+    
+    Notes:
+    ------
+    - The function performs Bayesian updating of beliefs based on sampled observations and action values.
+    - It tracks the number of samples taken before termination and the choices made during the sampling process.
+    - Results are stored in instance variables for further analysis.
+    """
+    # Initialize variables
     avTermChoice = np.full([len(rewardID),len(costID)],np.nan)
     avTermCost = np.full([len(rewardID),len(costID)],np.nan)
     self.noSamples_t = np.full([len(rewardID),len(costID),noTrials],np.nan)

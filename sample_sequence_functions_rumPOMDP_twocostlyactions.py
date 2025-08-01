@@ -8,8 +8,33 @@ import importlib
 from modelFunctions_rumPOMDP import *
 from convenience_functions_rumPOMDP import *
 
-def sample_sequence_observation_accumulated_cost(self,rewardID,beliefStart,maxSample,noTrials,obv_mismatch, obv_truestate=1, epsilon=0, biased_action=2):
+def sample_sequence_observation_accumulated_cost(self, rewardID, beliefStart, maxSample, noTrials, obv_mismatch, obv_truestate=1, epsilon=0, biased_action=2):
+    """
+    Samples a sequence of observations and accumulates costs based on the chosen actions and beliefs.
+
+    Parameters:
+    - rewardID (list): A list of reward identifiers used to index into belief and action values.
+    - beliefStart (float): The initial belief state from which to start sampling.
+    - maxSample (int): The maximum number of samples to draw in each trial.
+    - noTrials (int): The number of trials to run.
+    - obv_mismatch (str): Indicates whether to use mismatched observations ('mismatch' or other).
+    - obv_truestate (int, optional): The true state of the observation. Default is 1.
+    - epsilon (float, optional): The probability of choosing a biased action. Default is 0.
+    - biased_action (int, optional): The action to take when biased. Default is 2.
+
+    Returns:
+    - None: The function modifies the instance's attributes to store results of the sampling process.
     
+    Attributes modified:
+    - self.noSamples_t: Array storing the number of samples taken before termination for each trial.
+    - self.termChoice_t: Array storing the choice made at the end of each trial.
+    - self.posterior_beliefs: Array storing the posterior beliefs at each time step.
+    - self.posterior_beliefs_ending_in_A1: List of posterior beliefs ending in action A1.
+    - self.posterior_beliefs_ending_in_A2: List of posterior beliefs ending in action A2.
+    - self.noA3: Array counting the number of times action A3 was chosen.
+    - self.noA4: Array counting the number of times action A4 was chosen.
+    """
+    # Initialize arrays to store results
     # avTermChoice = np.full([len(rewardID)],np.nan)
     # avTermCost = np.full([len(rewardID)],np.nan)
     self.noSamples_t = np.full([len(rewardID),noTrials],np.nan)
