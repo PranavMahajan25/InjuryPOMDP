@@ -70,13 +70,17 @@ class POMDP:
 
             obvPrior[x,:] = stats.norm.pdf(self.obvs,obvMean,obvStd)*obvStep
 
-        self.margEvid,self.posterior = bayes_theorem(beliefRange,obvPrior,'-')
+        # Bug: Previously unnormalised marginal evidence and posterior probabilities were calculated here, which could lead to incorrect results. The normalization step has been added before calculating marginal evidence and posterior probabilities.
+        # self.margEvid,self.posterior = bayes_theorem(beliefRange,obvPrior,'-')
 
         obvPrior[obvPrior<0.001] = 0.001#...do not allow non-zero observation priors
         
         #...normalize each row so the sum of belief states is 1
         row_sums = obvPrior.sum(axis=1)
         obvPrior = obvPrior / row_sums[:, np.newaxis]
+
+        # Bug fix: Calculate marginal evidence AFTER normalization
+        self.margEvid,self.posterior = bayes_theorem(beliefRange,obvPrior,'-')
         
         self.beliefRange = beliefRange
         self.obvPrior = obvPrior
@@ -213,8 +217,16 @@ class POMDP:
                     self.actionValues[r,c,:,:] = actionValues
                     
                     #...save the decision thresholds for each reward function and cost
-                    self.decisionThreshold[r,c,0] = beliefRange[index_finder(actionValues[:,2],actionValues[:,0])]
-                    self.decisionThreshold[r,c,1] = beliefRange[index_finder(actionValues[:,2],actionValues[:,1])]
+                    # Bug: Previously thresholds were defined by the closest points between Q-value curves. After normalization, exact equality at b=0 could therefore be mistaken for the lower policy boundary.
+                    # self.decisionThreshold[r,c,0] = beliefRange[index_finder(actionValues[:,2],actionValues[:,0])]
+                    # self.decisionThreshold[r,c,1] = beliefRange[index_finder(actionValues[:,2],actionValues[:,1])]
+
+                    # Bug fix: Extract thresholds from the optimal policy itself. This is also consistent with the first-choice tie-breaking rule used when sampling trajectories.
+                    optimalPolicy = np.argmax(actionValues,axis=1)
+                    aActBeliefs = np.where(optimalPolicy==0)[0]
+                    aRandRBeliefs = np.where(optimalPolicy==1)[0]
+                    self.decisionThreshold[r,c,0] = beliefRange[aActBeliefs[-1]] if aActBeliefs.size else beliefRange[0]
+                    self.decisionThreshold[r,c,1] = beliefRange[aRandRBeliefs[0]] if aRandRBeliefs.size else beliefRange[-1]
                     
                     if figPrint:
 

@@ -43,19 +43,12 @@ def qvalues_figure(self, rewardID, figSave):
         else:
             axsr = axs[r]
 
-        if self.decisionThreshold[r,0] < self.decisionThreshold[r,2]:
-            thresh1 = self.decisionThreshold[r,0]
-            axsr.plot([self.decisionThreshold[r,0],self.decisionThreshold[r,0]],yLims,'k', linestyle="dashed",linewidth=3)
-        else:
-            thresh1 = self.decisionThreshold[r,2]
-            axsr.plot([self.decisionThreshold[r,2],self.decisionThreshold[r,2]],yLims,'k', linestyle="dashed",linewidth=3)   
-        if self.decisionThreshold[r,1] > self.decisionThreshold[r,3]:
-            thresh2 = self.decisionThreshold[r,1]
-            axsr.plot([self.decisionThreshold[r,1],self.decisionThreshold[r,1]],yLims,'k', linestyle="dashed",linewidth=3)
-        else:
-            thresh2 = self.decisionThreshold[r,3]
-            axsr.plot([self.decisionThreshold[r,3],self.decisionThreshold[r,3]],yLims,'k', linestyle="dashed",linewidth=3)    
-        # axsr.plot([self.decisionThreshold[r,4],self.decisionThreshold[r,4]],yLims,'k',linewidth=1)
+        # Bug: Previously the plotting code combined four pairwise Q-curve intersections, which could select an equality unrelated to a change in the optimal policy.
+        # Bug fix: The builder now stores policy-derived terminal-action thresholds directly in columns 0 and 1.
+        thresh1 = self.decisionThreshold[r,0]
+        thresh2 = self.decisionThreshold[r,1]
+        axsr.plot([thresh1,thresh1],yLims,'k', linestyle="dashed",linewidth=3)
+        axsr.plot([thresh2,thresh2],yLims,'k', linestyle="dashed",linewidth=3)
 
         actionValues = self.actionValues[reward,:,:]
         # axs[0].set_title(self.name)
@@ -100,4 +93,3 @@ def qvalues_figure(self, rewardID, figSave):
         plt.close(fig)
 
     return thresh1, thresh2
-

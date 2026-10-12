@@ -93,9 +93,18 @@ def run_two_costly_action_sim(true_state, figFolder):
         A3Cost =  np.array([-4]) # this reduces in the late stages of recovery 
         A4Cost =  np.array([-0.5]) 
     elif true_state == "case_2": #pain>gain
-        xObvs = [['A3_md5.0_std1_30_std2_30', 42.5, 57.5, 30, 30], ['A4_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]] # same info gain
+        # # Bug: I mistakenly used ['A3_md15.0_std1_30_std2_30', 42.5, 57.5, 30, 30] instead of ['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15] for the first observation in the previous version. (with -16 cost)
+        # xObvs = [['A3_md15.0_std1_30_std2_30', 42.5, 57.5, 30, 30], ['A4_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]]
+
+        # # Kuo's Bug fix: The previous line had a comment indicating "same info gain" but the observations were different. Adjusted to reflect the correct information gain. (with -16 cost)
+        # xObvs = [['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15], ['A4_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]]
+
+        # My Bug fix: Obs model same as the current published paper (HI) / Kuo's bug fix. But then we need to change the A3Cost to -64 to make sure a_nul q-value is greater than a_que for a subtantial set of belief states. Also need to keep vDelta=0.01 for proper convergence. This will go with A3Cost = -64.
+        xObvs = [['A3_md15.0_std1_15_std2_15', 42.5, 57.5, 15, 15], ['A4_md5.0_std1_30_std2_30', 47.5, 52.5, 30, 30]]
+
         allRewards = np.array([[ 100 ,  -100,    -400. ,  100 ]])
-        A3Cost =  np.array([-16]) # this reduces in the late stages of recovery 
+        # A3Cost =  np.array([-16])
+        A3Cost =  np.array([-64])
         A4Cost =  np.array([-0.5]) 
 
     figPrint = 'true'

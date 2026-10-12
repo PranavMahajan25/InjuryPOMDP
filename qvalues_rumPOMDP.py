@@ -9,7 +9,7 @@ import importlib
 from convenience_functions_rumPOMDP import *
 
 
-plt.rcParams.update({'font.size': 30})
+plt.rcParams.update({'font.size': 22})
 
 def qvalues_figure(self, rewardID, costID, figSave):
     """
@@ -384,7 +384,7 @@ def qvalues_figure3_balance(selves, intersections, figSave):
     axsr.spines['right'].set_linewidth(3)  
     axsr.spines['top'].set_linewidth(3)  
 
-    axsr.legend()
+    axsr.legend(loc='lower right')
 
     # if r == 0:
         # axsr.set(ylabel='Value of Action')
@@ -436,7 +436,7 @@ def qvalues_figure4(figSave):
     None
     """
     
-    plt.rcParams.update({'font.size': 30})
+    plt.rcParams.update({'font.size': 22})
     #illus/punishment sensitivity
     # beliefRange = self.beliefRange
 

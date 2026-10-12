@@ -83,7 +83,14 @@ def sample_sequence_observation_accumulated_cost(self, rewardID, costID, beliefS
 
                     else:
                      #   print('std and means as standard')
-                        obvSequence = np.random.normal(loc=self.xMeans[obv_truestate], scale=self.xStd[obv_truestate], size=maxSample)
+                        # obvSequence = np.random.normal(loc=self.xMeans[obv_truestate], scale=self.xStd[obv_truestate], size=maxSample)
+
+                        # Bug fix: sample from the observation model used by the planner.
+                        obvSequence = np.random.choice(
+                            self.obvs,
+                            size=maxSample,
+                            p=self.obvPrior[obv_truestate, :]
+                        )
 
                     qVals_samp = np.zeros([maxSample,3])
 
@@ -245,6 +252,3 @@ def sample_sequence_observation_accumulated_cost(self, rewardID, costID, beliefS
 
 #         plt.savefig(subPath+'sample_seq_'+str(self.name)+'.pdf')
 #         plt.savefig(subPath+'sample_seq'+str(self.name)+'.svg')
-
-
-    

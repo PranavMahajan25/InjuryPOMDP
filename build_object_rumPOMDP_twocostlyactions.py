@@ -80,14 +80,18 @@ class POMDP:
             A3obvStd = self.A3xStd[x]
 
             A3obvPrior[x,:] = stats.norm.pdf(self.A3obvs,A3obvMean,A3obvStd)*obvStep
-           
-        self.A3margEvid,self.A3posterior = bayes_theorem(beliefRange,A3obvPrior,'-')
+
+        # Bug: Previously unnormalised marginal evidence and posterior probabilities were calculated here, which could lead to incorrect results. The normalization step has been added before calculating marginal evidence and posterior probabilities.
+        # self.A3margEvid,self.A3posterior = bayes_theorem(beliefRange,A3obvPrior,'-')
 
         A3obvPrior[A3obvPrior<0.001] = 0.001#...do not allow non-zero observation priors
         
         #...normalize each row so the sum of belief states is 1
         row_sums = A3obvPrior.sum(axis=1)
         A3obvPrior = A3obvPrior / row_sums[:, np.newaxis]
+
+        # Bug fix: Calculate marginal evidence AFTER normalization
+        self.A3margEvid,self.A3posterior = bayes_theorem(beliefRange,A3obvPrior,'-')
         
         ### A4 margEvid and obvPrior
         self.A4name = A4xObvs[0]
@@ -108,13 +112,17 @@ class POMDP:
 
             A4obvPrior[x,:] = stats.norm.pdf(self.A4obvs,A4obvMean,A4obvStd)*obvStep
            
-        self.A4margEvid,self.A4posterior = bayes_theorem(beliefRange,A4obvPrior,'-')
+        # Bug: Previously unnormalised marginal evidence and posterior probabilities were calculated here, which could lead to incorrect results. The normalization step has been added before calculating marginal evidence and posterior probabilities.
+        # self.A4margEvid,self.A4posterior = bayes_theorem(beliefRange,A4obvPrior,'-')
 
         A4obvPrior[A4obvPrior<0.001] = 0.001#...do not allow non-zero observation priors
         
         #...normalize each row so the sum of belief states is 1
         row_sums = A4obvPrior.sum(axis=1)
         A4obvPrior = A4obvPrior / row_sums[:, np.newaxis]
+
+        # Bug fix: Calculate marginal evidence AFTER normalization
+        self.A4margEvid,self.A4posterior = bayes_theorem(beliefRange,A4obvPrior,'-')
 
         self.beliefRange = beliefRange
         self.obvStep = obvStep
@@ -246,7 +254,11 @@ class POMDP:
             beliefValues = np.zeros([len(beliefRange)])
             actionValues = np.zeros([len(beliefRange),4])
             
-            vDelta = 1 #...threshold for adjusting the value in an iteration
+            # Previous numerical tolerance:
+            # vDelta = 1
+
+            # Tighter convergence tolerance used for corrected analyses:
+            vDelta = 0.01
             qDelta = 1 #...RB
             
             updateTrue = True
@@ -295,11 +307,26 @@ class POMDP:
                 self.actionValues[r,:,:] = actionValues
                 
                 #...save the decision thresholds for each reward function and cost
-                self.decisionThreshold[r,0] = beliefRange[index_finder(actionValues[:,2],actionValues[:,0])]
-                self.decisionThreshold[r,1] = beliefRange[index_finder(actionValues[:,2],actionValues[:,1])] 
-                self.decisionThreshold[r,2] = beliefRange[index_finder(actionValues[:,3],actionValues[:,0])]
-                self.decisionThreshold[r,3] = beliefRange[index_finder(actionValues[:,3],actionValues[:,1])]  
-                self.decisionThreshold[r,4] = beliefRange[index_finder(actionValues[:,2],actionValues[:,3])] 
+                # Bug: Previously thresholds were defined by the closest points between individual Q-value curves. After normalization, exact equality at b=0 could therefore be mistaken for the lower policy boundary.
+                # self.decisionThreshold[r,0] = beliefRange[index_finder(actionValues[:,2],actionValues[:,0])]
+                # self.decisionThreshold[r,1] = beliefRange[index_finder(actionValues[:,2],actionValues[:,1])]
+                # self.decisionThreshold[r,2] = beliefRange[index_finder(actionValues[:,3],actionValues[:,0])]
+                # self.decisionThreshold[r,3] = beliefRange[index_finder(actionValues[:,3],actionValues[:,1])]
+                # self.decisionThreshold[r,4] = beliefRange[index_finder(actionValues[:,2],actionValues[:,3])]
+
+                # Bug fix: Extract the terminal-action thresholds from the optimal policy itself. This is also consistent with the first-choice tie-breaking rule used when sampling trajectories.
+                optimalPolicy = np.argmax(actionValues,axis=1)
+                aActBeliefs = np.where(optimalPolicy==0)[0]
+                aRandRBeliefs = np.where(optimalPolicy==1)[0]
+                lowerThreshold = beliefRange[aActBeliefs[-1]] if aActBeliefs.size else beliefRange[0]
+                upperThreshold = beliefRange[aRandRBeliefs[0]] if aRandRBeliefs.size else beliefRange[-1]
+                self.decisionThreshold[r,0] = lowerThreshold
+                self.decisionThreshold[r,1] = upperThreshold
+
+                # Retain the existing five-column array for compatibility with saved analysis code.
+                self.decisionThreshold[r,2] = lowerThreshold
+                self.decisionThreshold[r,3] = upperThreshold
+                self.decisionThreshold[r,4] = np.nan
                 
                 if figPrint:
 

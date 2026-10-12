@@ -65,9 +65,24 @@ def sample_sequence_observation_accumulated_cost(self, rewardID, beliefStart, ma
 
             else:
                 #   print('std and means as standard')
-                A3obvSequence = np.random.normal(loc=self.A3xMeans[obv_truestate], scale=self.A3xStd[obv_truestate], size=maxSample)
-                A4obvSequence = np.random.normal(loc=self.A4xMeans[obv_truestate], scale=self.A4xStd[obv_truestate], size=maxSample)
-            
+                # A3obvSequence = np.random.normal(loc=self.A3xMeans[obv_truestate], scale=self.A3xStd[obv_truestate], size=maxSample)
+                # A4obvSequence = np.random.normal(loc=self.A4xMeans[obv_truestate], scale=self.A4xStd[obv_truestate], size=maxSample)
+
+                # Previous implementation sampled an unbounded continuous Gaussian and mapped each draw onto the nearest discrete observation.
+
+                # Bug fix: sample from the same normalised discrete observation model used during value iteration and Bayesian belief updating.
+                A3obvSequence = np.random.choice(
+                    self.A3obvs,
+                    size=maxSample,
+                    p=self.A3obvPrior[obv_truestate, :]
+                )
+                A4obvSequence = np.random.choice(
+                    self.A4obvs,
+                    size=maxSample,
+                    p=self.A4obvPrior[obv_truestate, :]
+                )
+
+
             # print(self.A3xMeans, self.A3xStd, A3obvSequence)
             # print(self.A4xMeans, self.A4xStd, A4obvSequence)
 
@@ -243,6 +258,3 @@ def sample_sequence_observation_accumulated_cost(self, rewardID, beliefStart, ma
 
 #         plt.savefig(subPath+'sample_seq_'+str(self.name)+'.pdf')
 #         plt.savefig(subPath+'sample_seq'+str(self.name)+'.svg')
-
-
-    
