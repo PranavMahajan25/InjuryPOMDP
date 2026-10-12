@@ -11,3 +11,6 @@ For simulations without $a_{nul}$ action, `build_object_rumPOMDP.py` builds the 
 The requirements are numpy, scipy, matplotlib and pandas.
 
 Contact pranav.mahajan AT ndcn.ox.ac.uk for further details.
+
+## Acknowledgements 
+The authors are very grateful to Kuo Liu for identifying the two minor inconsistencies in the code, resulting in author corrections for the paper. The code corrections were applied in commit 229abc65ee20282c3648f6d1f61e578e8e3b32a2. Further details can be found in the author corrections notice. 
